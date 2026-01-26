@@ -6,12 +6,13 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ui": "rm -rf dist && cd ../notes && npm run build && cp -r dist ../notes-backend",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
   },
   "author": "Torge Schöwing",
   "license": "MIT",
   "dependencies": {
-    "cors": "^2.8.6",
     "express": "^5.2.1"
   }
 }
