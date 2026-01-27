@@ -84,18 +84,6 @@ app.put('/api/persons/:id', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
-    if (!body.name) {
-        return response.status(400).json({
-            error: 'name missing'
-        })
-    }
-
-    if (!body.number) {
-        return response.status(400).json({
-            error: 'number missing'
-        })
-    }
-
     Person.find({name: body.name}).then(result => {
         console.log("Find Person before save ", JSON.stringify(result))
         if (result === []) {
