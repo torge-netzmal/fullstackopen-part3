@@ -1,6 +1,9 @@
+require('dotenv').config({override: true})
+
 const express = require('express')
 const morgan = require('morgan')
 
+const Person = require('./models/person')
 
 const app = express()
 
@@ -47,24 +50,30 @@ let persons = [
 
 app.get('/info', (request, response) => {
     const date = new Date();
-    response.send(`<p>
+    Person.find({}).then(persons => {
+        response.send(`<p>
         Phonebook has info for ${persons.length} people <br>
         ${date.toString()}
         </p>`)
+    })
+
 })
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+    Person.find({}).then(persons => {
+        response.json(persons)
+    }).catch(error => {
+        response.status(404).end()
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
     const id = request.params.id
-    const person = persons.find(person => person.id === id)
-    if (person) {
+    Person.findById(request.params.id).then(person => {
         response.json(person)
-    } else {
+    }).catch(error => {
         response.status(404).end()
-    }
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -73,12 +82,6 @@ app.delete('/api/persons/:id', (request, response) => {
 
     response.status(204).end()
 })
-
-
-const generateId = () => {
-    const id = Math.floor(Math.random() * 1000000)
-    return String(id)
-}
 
 app.post('/api/persons', (request, response) => {
     const body = request.body
@@ -95,25 +98,25 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const targetPerson = persons.find(person => person.name === body.name)
-    console.log(JSON.stringify(targetPerson))
+    /*    const targetPerson = persons.find(person => person.name === body.name)
+        console.log(JSON.stringify(targetPerson))
 
-    if (targetPerson) {
-        console.log(targetPerson)
-        return response.status(409).json({
-            error: 'name must be unique'
+        if (targetPerson) {
+            console.log(targetPerson)
+            return response.status(409).json({
+                error: 'name must be unique'
+            })
+        }*/
+
+    const person = new Person(
+        {
+            name: body.name,
+            number: body.number || false,
         })
-    }
 
-    const person = {
-        name: body.name,
-        number: body.number || false,
-        id: generateId(),
-    }
-
-    persons = persons.concat(person)
-
-    response.json(person)
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
 })
 
 const unknownEndpoint = (request, response) => {
