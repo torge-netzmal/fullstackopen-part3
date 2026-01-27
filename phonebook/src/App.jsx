@@ -44,10 +44,8 @@ const App = () => {
                             setSuccessMessage(null)
                         }, 5000)
                     })
-                    .catch(() => {
-                        setErrorMessage(
-                            `Information of ${existingPerson.name} has already been removed from server`
-                        )
+                    .catch(error => {
+                        setErrorMessage(error.response.data.error)
                         setPersons(persons.filter(person => person.id !== existingPerson.id))
                         setTimeout(() => {
                             setErrorMessage(null)
@@ -64,6 +62,12 @@ const App = () => {
                     )
                     setTimeout(() => {
                         setSuccessMessage(null)
+                    }, 5000)
+                })
+                .catch(error => {
+                    setErrorMessage(error.response.data.error)
+                    setTimeout(() => {
+                        setErrorMessage(null)
                     }, 5000)
                 })
         }

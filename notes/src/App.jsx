@@ -49,7 +49,15 @@ const App = () => {
             .then(returnedNote => {
                 setNotes(notes.concat(returnedNote))
                 setNewNote('')
-            })
+            }).catch(error => {
+            setErrorMessage(
+                `Error while creating: '${error}'`
+            )
+            setTimeout(() => {
+                setErrorMessage(null)
+            }, 5000)
+            setNewNote('')
+        })
     }
     const notesToShow = showAll
         ? notes
