@@ -12,7 +12,7 @@ node_modules
 dist-ssr
 *.local
 .env
-
+eslint.config.mjs
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
